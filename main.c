@@ -2,5 +2,7 @@
 
 int main()
 {
-    printf("Hello World");
+test_2
+    printf("Tobias");
+    return 0;
 }
