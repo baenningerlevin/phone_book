@@ -304,7 +304,6 @@ void editEntry(entry *userEntry)
         menu();
     }
 
-    // TODO: Ask for
     // copy the text from original file into the new file except the edited line
     do
     {
@@ -336,24 +335,37 @@ void editEntry(entry *userEntry)
             scanf("%[^\n]s", &userEntry->information);
             fflush(stdin);
 
-            // Save data in .csv file using append
-            FILE *fptr = fopen("contacts.csv", "a");
-            fprintf(fptr, "%s;%s;%s;%s\n", userEntry->firstName, userEntry->lastName, userEntry->number, userEntry->information);
-            fclose(fptr);
+            printf("Moechtest du die Aenderungen speichern (j/n)? ");
+            scanf("%c", &inputCheck);
+            fflush(stdin);
+
+            while (inputCheck != 'j' && inputCheck != 'n')
+            {
+                printf("Ungueltige Eingabe! Moechtest du diesen Kontakt speichern (j/n)? ");
+                scanf("%c", &inputCheck);
+                fflush(stdin);
+            }
+
+            if (inputCheck == 'j')
+            {
+                // Save data in .csv file using append
+                printf("\nAenderungen werden gespeichert ...");
+                fprintf(new, "%s;%s;%s;%s\n", userEntry->firstName, userEntry->lastName, userEntry->number, userEntry->information);
+            }
+            else if (inputCheck == 'n')
+            {
+                printf("\nAenderungen werden nicht gespeichert ...");
+                fputs(buffer, new);
+            }
         }
-
         currentLine++;
-
     } while (keepGoing == true);
 
-    // close all open files
     fclose(file);
     fclose(new);
 
-    // remove original file and rename temporary file to the name of original file
     remove("contacts.csv");
     rename("new.csv", "contacts.csv");
 
-    // When function finishes go back to menu
     menu();
 }
