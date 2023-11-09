@@ -446,6 +446,8 @@ void editEntry(entry *userEntry)
     menu();
 }
 
+// Function to search for an entry
+// TODO: Add function, when no entry is found
 void searchEntry(entry *userEntry)
 {
     // pointer declaration
