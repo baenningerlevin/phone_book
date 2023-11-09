@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <ctype.h>
 
 // Structure for .csv entries
 typedef struct Entry
@@ -103,24 +104,7 @@ void newEntry(entry *userEntry)
     printf("\n----------------------------------------------------------\n\n");
 
     // Get user input, working with scanf() because of the formatting of the .csv file
-    printf("Was ist der Vorname von deinem Kontakt? ");
-    fflush(stdin);
-    scanf("%[^\n]s", &userEntry->firstName);
-
-    // Using fflush(stdin) to clear input buffer
-    fflush(stdin);
-
-    printf("Was ist der Nachname von deinem Kontakt? ");
-    scanf("%[^\n]s", &userEntry->lastName);
-    fflush(stdin);
-
-    printf("Was lautet die Telefonnummer von deinem Kontakt? ");
-    scanf("%[^\n]s", &userEntry->number);
-    fflush(stdin);
-
-    printf("Sonstige Informationen? ");
-    scanf("%[^\n]s", &userEntry->information);
-    fflush(stdin);
+    getUserInput(userEntry);
 
     printf("Moechtest du diesen Kontakt speichern (j/n)? ");
     scanf("%c", &inputCheck);
@@ -147,6 +131,80 @@ void newEntry(entry *userEntry)
     }
 
     menu();
+}
+
+void getUserInput(entry *userEntry)
+{
+    printf("Was ist der Vorname von deinem Kontakt? ");
+    while (1)
+    {
+        fflush(stdin);
+        scanf("%[^\n]s", &userEntry->firstName);
+        fflush(stdin);
+        int valid = 1;
+
+        // Go through every character of the string and check if it's a letter
+        for (int i = 0; i < strlen(userEntry->firstName); i++)
+        {
+            if (!isalpha(userEntry->firstName[i]))
+            {
+                printf("Fehler: Die Eingabe darf keine Zahlen oder Sonderzeichen enthalten. Bitte versuche es erneut: ");
+                valid = 0;
+                break;
+            }
+        }
+        if (valid)
+        {
+            break;
+        }
+    }
+
+    printf("Was ist der Nachname von deinem Kontakt? ");
+    while (1)
+    {
+        fflush(stdin);
+        scanf("%[^\n]s", &userEntry->lastName);
+        fflush(stdin);
+        int valid = 1;
+        
+        // Go through every character of the string and check if it's a letter
+        for (int i = 0; i < strlen(userEntry->lastName); i++)
+        {
+            if (!isalpha(userEntry->lastName[i]))
+            {
+                printf("Fehler: Die Eingabe darf keine Zahlen oder Sonderzeichen enthalten. Bitte versuche es erneut: ");
+                valid = 0;
+                break;
+            }
+        }
+        if (valid)
+        {
+            break;
+        }
+    }
+
+    printf("Wie lautet die Telefonnummer von deinem Kontakt (+41 XX XXX XX XX)? ");
+    while (1)
+    {
+        fflush(stdin);
+        scanf("%[^\n]s", &userEntry->number);
+        fflush(stdin);
+        int valid = 1;
+        // Check if the number is in the correct format
+        if (userEntry->number[0] != '+' || userEntry->number[1] != '4' || userEntry->number[2] != '1' || userEntry->number[3] != ' ' || !isdigit(userEntry->number[4]) || !isdigit(userEntry->number[5]) || userEntry->number[6] != ' ' || !isdigit(userEntry->number[7]) || !isdigit(userEntry->number[8]) || !isdigit(userEntry->number[9]) || userEntry->number[10] != ' ' || !isdigit(userEntry->number[11]) || !isdigit(userEntry->number[12]) || userEntry->number[13] != ' ' || !isdigit(userEntry->number[14]) || !isdigit(userEntry->number[15]))
+        {
+            printf("Fehler: Die Telefonnummer muss im Format +41 XX XXX XX XX angegeben werden. Bitte versuche es erneut: \n");
+            valid = 0;
+        }
+        if (valid)
+        {
+            break;
+        }
+    }
+
+    printf("Sonstige Informationen? ");
+    scanf("%[^\n]s", &userEntry->information);
+    fflush(stdin);
 }
 
 // Function to show all entries
@@ -231,7 +289,7 @@ void deleteEntry(entry *userEntry)
     file = fopen(filename, "r");
     temp = fopen(tempFile, "w");
 
-    // if Error output ERROR 404 (file not found)
+    // if Error output go back to menu
     if (file == NULL || temp == NULL)
     {
         printf("\nDatei exisitiert nicht! Bitte zuerst neue Eintraege erstellen.");
@@ -281,9 +339,11 @@ void deleteEntry(entry *userEntry)
     {
         printf("Eintrag #%d wird nicht geloescht ...", deleteLine);
 
+        // Close all open files
         fclose(file);
         fclose(temp);
 
+        // Remove temporary file
         remove(tempFile);
     }
 
@@ -312,7 +372,7 @@ void editEntry(entry *userEntry)
     FILE *file = fopen("contacts.csv", "r");
     FILE *new = fopen("new.csv", "w");
 
-    // if Error output ERROR 404 (file not found)
+    // if Error go back to menu
     if (file == NULL || new == NULL)
     {
         printf("Datei exisitiert nicht! Bitte zuerst neue Eintraege erstellen.");
@@ -330,29 +390,7 @@ void editEntry(entry *userEntry)
             fputs(buffer, new);
         else if (currentLine == editLine)
         {
-            printf("Du kannst den Eintrag von Linie %d jetzt bearbeiten\n\n", editLine);
-
-            // Get user input, working with scanf() because of the formatting of the .csv file
-            printf("Was ist der Vorname von deinem Kontakt? ");
-            fflush(stdin);
-            scanf("%[^\n]s", &userEntry->firstName);
-            fflush(stdin);
-
-            printf("Was ist der Nachname von deinem Kontakt? ");
-            scanf("%[^\n]s", &userEntry->lastName);
-            fflush(stdin);
-
-            printf("Was lautet die Telefonnummer von deinem Kontakt? ");
-            scanf("%[^\n]s", &userEntry->number);
-            fflush(stdin);
-
-            printf("Sonstige Informationen? ");
-            scanf("%[^\n]s", &userEntry->information);
-            fflush(stdin);
-
-            printf("Moechtest du die Aenderungen speichern (j/n)? ");
-            scanf("%c", &inputCheck);
-            fflush(stdin);
+            getUserInput(userEntry);
 
             while (inputCheck != 'j' && inputCheck != 'n')
             {
