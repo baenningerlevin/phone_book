@@ -180,7 +180,12 @@ void deleteEntry(entry *userEntry)
 
     // enter the line to be deleted
     printf("Zu loeschende Linie: ");
-    scanf("%d", &deleteLine);
+    while (scanf("%d", &deleteLine) != 1)
+    {
+        while (getchar() != '\n')
+            ;
+        printf("Falsches Format. Bitte geben Sie eine Zahl ein: ");
+    }
     fflush(stdin);
 
     // open original file to read and temporary file to write
