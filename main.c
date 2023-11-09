@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 // Structure for .csv entries
 typedef struct Entry
@@ -15,6 +16,7 @@ typedef struct Entry
 int menu();
 void newEntry(entry *userEntry);
 void showEntries();
+void deleteEntry(entry *userEntry);
 
 // Main function
 int main()
@@ -74,7 +76,7 @@ int menu()
         break;
 
     case 4:
-        // Vierte Funktion verlinken
+        deleteEntry(&userEntry);
         break;
 
     case 5:
@@ -130,7 +132,7 @@ void showEntries()
 {
     // Variable Declaration
     FILE *fptr;
-    char lineRead[307], temp[307];
+    char lineRead[307];
     int counter = 1;
 
     printf("\n\nAlle Eintraege anzeigen");
@@ -153,6 +155,69 @@ void showEntries()
         }
     }
 
+    // Close file
+    fclose(fptr);
+
     // After function finishes go back to menu
+    menu();
+}
+
+void deleteEntry(entry *userEntry)
+{
+    // Create variable for temporary file and contacts file
+    FILE *file, *temp;
+
+    // Variable declaration
+    char filename[13] = "contacts.csv", tempFile[28];
+    char buffer[2048];
+    int deleteLine = 0;
+    bool keepGoing = true;
+    int currentLine = 1;
+
+    // create (name for) temporary file
+    strcpy(tempFile, "temp____");
+    strcat(tempFile, filename);
+
+    // enter the line to be deleted
+    printf("Zu loeschende Linie: ");
+    scanf("%d", &deleteLine);
+    fflush(stdin);
+
+    // open original file to read and temporary file to write
+    file = fopen(filename, "r");
+    temp = fopen(tempFile, "w");
+
+    // if Error output ERROR 404 (file not found)
+    if (file == NULL || temp == NULL)
+    {
+        printf("Datei exisitiert nicht! Bitte zuerst neue Einträge erstellen.");
+        menu();
+    }
+
+    // copy the text from original file into the temporary file except the line to be deleted
+    do
+    {
+        fgets(buffer, 2048, file);
+
+        if (feof(file))
+            keepGoing = false;
+        else if (currentLine != deleteLine)
+            fputs(buffer, temp);
+
+        currentLine++;
+
+    } while (keepGoing == true);
+
+    // close all open files
+    fclose(file);
+    fclose(temp);
+
+    // remove original file
+    remove(filename);
+
+    // rename temporary file to the name of original file
+    rename(tempFile, filename);
+
+    // When function finishes go back to menu
     menu();
 }
