@@ -103,3 +103,4 @@ void newEntry(entry *userEntry)
     FILE *fptr = fopen("contacts.csv", "a");
     fprintf(fptr, "%s;%s;%s;%s\n", userEntry->firstName, userEntry->lastName, userEntry->number, userEntry->information);
 }
+
