@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 // Structure for .csv entries
 typedef struct Entry
@@ -124,12 +125,12 @@ void newEntry(entry *userEntry)
     menu();
 }
 
-//
+// Function to show all entries
 void showEntries()
 {
     // Variable Declaration
     FILE *fptr;
-    char lineRead[307];
+    char lineRead[307], temp[307];
     int counter = 1;
 
     printf("\n\nAlle Eintraege anzeigen");
@@ -152,6 +153,6 @@ void showEntries()
         }
     }
 
-    // After
+    // After function finishes go back to menu
     menu();
 }
