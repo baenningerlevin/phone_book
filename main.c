@@ -171,7 +171,22 @@ void showEntries()
         // Read every line of the .csv file
         while (fgets(lineRead, 307, fptr) != NULL)
         {
-            printf("%d: %s", counter, lineRead);
+            // Split the line into tokens separated by semicolons
+            char *token = strtok(lineRead, ";");
+
+            // Print the index and the first token
+            printf("%d: %s", counter, token);
+
+            // Print the rest of the tokens with a space character in between
+            while (token = strtok(NULL, ";"))
+            {
+                printf(" %s", token);
+            }
+
+            // Print a newline character to move to the next line
+            printf("\n");
+
+            // Increment the counter
             counter++;
         }
     }
