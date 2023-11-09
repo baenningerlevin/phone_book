@@ -20,6 +20,7 @@ int menu();
 void newEntry(entry *userEntry);
 void showEntries();
 void deleteEntry(entry *userEntry);
+void editEntry(entry *userEntry);
 
 // Main function
 int main()
@@ -75,7 +76,7 @@ int menu()
         break;
 
     case 3:
-        // Dritte Funktion verlinken
+        editEntry(&userEntry);
         break;
 
     case 4:
@@ -135,14 +136,14 @@ void newEntry(entry *userEntry)
     if (inputCheck == 'j')
     {
         // Save data in .csv file using append
-        printf("Kontakt wird gespeichert ...");
+        printf("\nKontakt wird gespeichert ...");
         FILE *fptr = fopen("contacts.csv", "a");
         fprintf(fptr, "%s;%s;%s;%s\n", userEntry->firstName, userEntry->lastName, userEntry->number, userEntry->information);
         fclose(fptr);
     }
     else if (inputCheck == 'n')
     {
-        printf("Kontakt wird nicht gespeichert ...");
+        printf("\nKontakt wird nicht gespeichert ...");
     }
 
     menu();
@@ -163,8 +164,7 @@ void showEntries()
     if ((fptr = fopen("contacts.csv", "r")) == NULL)
     {
         // Go back to menu, if it doesn't exist
-        printf("Datei exisitiert nicht! Bitte zuerst neue Einträge erstellen.");
-        menu();
+        printf("\nDatei exisitiert nicht! Bitte zuerst neue Einträge erstellen.");
     }
     else
     {
@@ -199,7 +199,7 @@ void deleteEntry(entry *userEntry)
     strcpy(tempFile, "temp____");
     strcat(tempFile, filename);
 
-    printf("Eintrag loeschen");
+    printf("\nEintrag loeschen");
     printf("\n-------------------------------------------------------------------------\n\n");
 
     // enter the line to be deleted
@@ -219,7 +219,7 @@ void deleteEntry(entry *userEntry)
     // if Error output ERROR 404 (file not found)
     if (file == NULL || temp == NULL)
     {
-        printf("Datei exisitiert nicht! Bitte zuerst neue Einträge erstellen.");
+        printf("\nDatei exisitiert nicht! Bitte zuerst neue Einträge erstellen.");
         menu();
     }
 
@@ -229,7 +229,7 @@ void deleteEntry(entry *userEntry)
 
     while (inputCheck != 'j' && inputCheck != 'n')
     {
-        printf("Ungültige Eingabe!Bist du dir sicher, dass du Eintrag #%d löschen möchtest (j/n)? ", deleteLine);
+        printf("Ungültige Eingabe! Bist du dir sicher, dass du Eintrag #%d löschen möchtest (j/n)? ", deleteLine);
         scanf("%c", &inputCheck);
         fflush(stdin);
     }
@@ -271,6 +271,87 @@ void deleteEntry(entry *userEntry)
 
         remove(tempFile);
     }
+
+    // When function finishes go back to menu
+    menu();
+}
+
+void editEntry(entry *userEntry)
+{
+    // Create variable for temporary file and contacts file
+    // Variable declaration
+    char buffer[2048];
+    int editLine = 0;
+    bool keepGoing = true;
+    int currentLine = 1;
+
+    printf("\nEintrag bearbeiten");
+    printf("\n-------------------------------------------------------------------------\n\n");
+
+    // enter the line to be edited
+    printf("Welche Linie willst du bearbeiten? ");
+    scanf("%d", &editLine);
+    fflush(stdin);
+
+    // open original file to read and temporary file to write
+    FILE *file = fopen("contacts.csv", "r");
+    FILE *new = fopen("new.csv", "w");
+
+    // if Error output ERROR 404 (file not found)
+    if (file == NULL || new == NULL)
+    {
+        printf("Datei exisitiert nicht! Bitte zuerst neue Einträge erstellen.");
+        menu();
+    }
+
+    // copy the text from original file into the new file except the edited line
+    do
+    {
+        fgets(buffer, 2048, file);
+
+        if (feof(file))
+            keepGoing = false;
+        else if (currentLine != editLine)
+            fputs(buffer, new);
+        else if (currentLine == editLine)
+        {
+            printf("Du kannst den Eintrag von Linie %d jetzt bearbeiten\n\n", editLine);
+
+            // Get user input, working with scanf() because of the formatting of the .csv file
+            printf("Was ist der Vorname von deinem Kontakt? ");
+            fflush(stdin);
+            scanf("%[^\n]s", &userEntry->firstName);
+            fflush(stdin);
+
+            printf("Was ist der Nachname von deinem Kontakt? ");
+            scanf("%[^\n]s", &userEntry->lastName);
+            fflush(stdin);
+
+            printf("Was lautet die Telefonnummer von deinem Kontakt? ");
+            scanf("%[^\n]s", &userEntry->number);
+            fflush(stdin);
+
+            printf("Sonstige Informationen? ");
+            scanf("%[^\n]s", &userEntry->information);
+            fflush(stdin);
+
+            // Save data in .csv file using append
+            FILE *fptr = fopen("contacts.csv", "a");
+            fprintf(fptr, "%s;%s;%s;%s\n", userEntry->firstName, userEntry->lastName, userEntry->number, userEntry->information);
+            fclose(fptr);
+        }
+
+        currentLine++;
+
+    } while (keepGoing == true);
+
+    // close all open files
+    fclose(file);
+    fclose(new);
+
+    // remove original file and rename temporary file to the name of original file
+    remove("contacts.csv");
+    rename("new.csv", "contacts.csv");
 
     // When function finishes go back to menu
     menu();
