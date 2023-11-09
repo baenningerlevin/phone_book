@@ -22,6 +22,8 @@ void newEntry(entry *userEntry);
 void showEntries();
 void deleteEntry(entry *userEntry);
 void editEntry(entry *userEntry);
+void getUserInput(entry *userEntry);
+void searchEntry(entry *userEntry);
 
 // Main function
 int main()
@@ -48,7 +50,7 @@ int menu()
     printf("| -6- Programm verlassen         |\n");
     printf("+--------------------------------+\n\n");
 
-    // Get userinput and check if it's a number
+    // Get user input and check if it's a number
     printf("Bitte treffen Sie eine Auswahl: ");
     while (scanf("%d", &choice) != 1)
     {
@@ -85,7 +87,7 @@ int menu()
         break;
 
     case 5:
-        // Fuenfte Funktion verlinken
+        searchEntry(&userEntry);
         break;
 
     case 6:
@@ -106,10 +108,12 @@ void newEntry(entry *userEntry)
     // Get user input, working with scanf() because of the formatting of the .csv file
     getUserInput(userEntry);
 
+    // Check if user wants to save the entry
     printf("Moechtest du diesen Kontakt speichern (j/n)? ");
     scanf("%c", &inputCheck);
     fflush(stdin);
 
+    // Check if user types in a valid input
     while (inputCheck != 'j' && inputCheck != 'n')
     {
         printf("Ungueltige Eingabe! Moechtest du diesen Kontakt speichern (j/n)? ");
@@ -117,6 +121,7 @@ void newEntry(entry *userEntry)
         fflush(stdin);
     }
 
+    // If user wants to save the entry
     if (inputCheck == 'j')
     {
         // Save data in .csv file using append
@@ -125,6 +130,8 @@ void newEntry(entry *userEntry)
         fprintf(fptr, "%s;%s;%s;%s\n", userEntry->firstName, userEntry->lastName, userEntry->number, userEntry->information);
         fclose(fptr);
     }
+
+    // If user doesn't want to save the entry
     else if (inputCheck == 'n')
     {
         printf("\nKontakt wird nicht gespeichert ...");
@@ -133,6 +140,7 @@ void newEntry(entry *userEntry)
     menu();
 }
 
+// Function to get user input
 void getUserInput(entry *userEntry)
 {
     printf("Was ist der Vorname von deinem Kontakt? ");
@@ -166,7 +174,7 @@ void getUserInput(entry *userEntry)
         scanf("%[^\n]s", &userEntry->lastName);
         fflush(stdin);
         int valid = 1;
-        
+
         // Go through every character of the string and check if it's a letter
         for (int i = 0; i < strlen(userEntry->lastName); i++)
         {
@@ -256,6 +264,7 @@ void showEntries()
     menu();
 }
 
+// Function to delete an entry
 void deleteEntry(entry *userEntry)
 {
     // Create variable for temporary file and contacts file
@@ -300,6 +309,7 @@ void deleteEntry(entry *userEntry)
     scanf("%c", &inputCheck);
     fflush(stdin);
 
+    // Check if user wants to delete the entry
     while (inputCheck != 'j' && inputCheck != 'n')
     {
         printf("Ungueltige Eingabe! Bist du dir sicher, dass du Eintrag #%d loeschen moechtest (j/n)? ", deleteLine);
@@ -307,6 +317,7 @@ void deleteEntry(entry *userEntry)
         fflush(stdin);
     }
 
+    // If user wants to delete the entry
     if (inputCheck == 'j')
     {
         printf("Eintrag #%d wird geloescht ...", deleteLine);
@@ -335,6 +346,8 @@ void deleteEntry(entry *userEntry)
         // rename temporary file to the name of original file
         rename(tempFile, filename);
     }
+
+    // If user doesn't want to delete the entry
     else if (inputCheck == 'n')
     {
         printf("Eintrag #%d wird nicht geloescht ...", deleteLine);
@@ -351,6 +364,7 @@ void deleteEntry(entry *userEntry)
     menu();
 }
 
+// Function to edit an entry
 void editEntry(entry *userEntry)
 {
     // Create variable for temporary file and contacts file
@@ -392,6 +406,12 @@ void editEntry(entry *userEntry)
         {
             getUserInput(userEntry);
 
+            // Check if user wants to save the entry
+            printf("Moechtest du die Kontaktinformationen ändern (j/n)? ");
+            scanf("%c", &inputCheck);
+            fflush(stdin);
+
+            // Check if user types in a valid input
             while (inputCheck != 'j' && inputCheck != 'n')
             {
                 printf("Ungueltige Eingabe! Moechtest du diesen Kontakt speichern (j/n)? ");
@@ -399,12 +419,15 @@ void editEntry(entry *userEntry)
                 fflush(stdin);
             }
 
+            // If user wants to save the entry
             if (inputCheck == 'j')
             {
                 // Save data in .csv file using append
                 printf("\nAenderungen werden gespeichert ...");
                 fprintf(new, "%s;%s;%s;%s\n", userEntry->firstName, userEntry->lastName, userEntry->number, userEntry->information);
             }
+
+            // If user doesn't want to save the entry
             else if (inputCheck == 'n')
             {
                 printf("\nAenderungen werden nicht gespeichert ...");
@@ -419,6 +442,63 @@ void editEntry(entry *userEntry)
 
     remove("contacts.csv");
     rename("new.csv", "contacts.csv");
+
+    menu();
+}
+
+void searchEntry(entry *userEntry)
+{
+    // pointer declaration
+    FILE *fp;
+
+    // variable declaration
+    char word[100], filename[100] = "contacts.csv";
+    char line[100];
+    int counter = 0;
+
+    printf("Wen suchst du? (Vorname): ");
+    fflush(stdin);
+    scanf("%[^\n]", word);
+    fflush(stdin);
+
+    fp = fopen(filename, "r");
+
+    // checks if pointer gets back nothing
+    if (fp == NULL)
+    {
+        printf("Datei exisitiert nicht! Bitte zuerst neue Einträge erstellen.");
+        menu();
+    }
+
+    printf("Eintraege zu '%s' gefunden!\n\n", word);
+
+    // reads every line of the file contacts.csv until the end is reached
+    while (fgets(line, sizeof(line), fp))
+    {
+
+        line[strcspn(line, "\n")] = '\0'; // searchs for new lines and chaneges it to \0 (end of a string)
+
+        if (strstr(line, word))
+        {
+            counter++;
+
+            char *token = strtok(line, ";");
+
+            printf("-%d-  ", counter);
+
+            // loops through the string to extract all other tokens
+            while (token != NULL)
+            {
+                printf("%-20s", token); // ajusts the buffer zone of each entry to 20 characers
+
+                token = strtok(NULL, ";"); // sets the variable token to the delimiter ;
+            }
+
+            printf("\n");
+        }
+    }
+
+    fclose(fp);
 
     menu();
 }
