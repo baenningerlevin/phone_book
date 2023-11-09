@@ -42,7 +42,7 @@ int menu()
     printf("| -1- Alle Eintraege anzeigen    |\n");
     printf("| -2- Neuer Eintrag              |\n");
     printf("| -3- Eintrag bearbeiten         |\n");
-    printf("| -4- Eintrag löschen            |\n");
+    printf("| -4- Eintrag loeschen           |\n");
     printf("| -5- Eintrag suchen             |\n");
     printf("| -6- Programm verlassen         |\n");
     printf("+--------------------------------+\n\n");
@@ -59,7 +59,7 @@ int menu()
     // Inputs which aren't in the range, will get asked again for a valid number.
     while (choice > 6 || choice < 1)
     {
-        printf("Bitte geben Sie eine gültige Zahl ein: ");
+        printf("Bitte geben Sie eine gueltige Zahl ein: ");
         scanf("%d", &choice);
         fflush(stdin);
     }
@@ -84,7 +84,7 @@ int menu()
         break;
 
     case 5:
-        // Fünfte Funktion verlinken
+        // Fuenfte Funktion verlinken
         break;
 
     case 6:
@@ -122,13 +122,13 @@ void newEntry(entry *userEntry)
     scanf("%[^\n]s", &userEntry->information);
     fflush(stdin);
 
-    printf("Möchtest du diesen Kontakt speichern (j/n)? ");
+    printf("Moechtest du diesen Kontakt speichern (j/n)? ");
     scanf("%c", &inputCheck);
     fflush(stdin);
 
     while (inputCheck != 'j' && inputCheck != 'n')
     {
-        printf("Ungültige Eingabe! Möchtest du diesen Kontakt speichern (j/n)? ");
+        printf("Ungueltige Eingabe! Moechtest du diesen Kontakt speichern (j/n)? ");
         scanf("%c", &inputCheck);
         fflush(stdin);
     }
@@ -164,7 +164,7 @@ void showEntries()
     if ((fptr = fopen("contacts.csv", "r")) == NULL)
     {
         // Go back to menu, if it doesn't exist
-        printf("\nDatei exisitiert nicht! Bitte zuerst neue Einträge erstellen.");
+        printf("\nDatei exisitiert nicht! Bitte zuerst neue Eintraege erstellen.");
     }
     else
     {
@@ -219,24 +219,24 @@ void deleteEntry(entry *userEntry)
     // if Error output ERROR 404 (file not found)
     if (file == NULL || temp == NULL)
     {
-        printf("\nDatei exisitiert nicht! Bitte zuerst neue Einträge erstellen.");
+        printf("\nDatei exisitiert nicht! Bitte zuerst neue Eintraege erstellen.");
         menu();
     }
 
-    printf("Bist du dir sicher, dass du Eintrag #%d löschen möchtest (j/n)? ", deleteLine);
+    printf("Bist du dir sicher, dass du Eintrag #%d loeschen moechtest (j/n)? ", deleteLine);
     scanf("%c", &inputCheck);
     fflush(stdin);
 
     while (inputCheck != 'j' && inputCheck != 'n')
     {
-        printf("Ungültige Eingabe! Bist du dir sicher, dass du Eintrag #%d löschen möchtest (j/n)? ", deleteLine);
+        printf("Ungueltige Eingabe! Bist du dir sicher, dass du Eintrag #%d loeschen moechtest (j/n)? ", deleteLine);
         scanf("%c", &inputCheck);
         fflush(stdin);
     }
 
     if (inputCheck == 'j')
     {
-        printf("Eintrag #%d wird gelöscht ...", deleteLine);
+        printf("Eintrag #%d wird geloescht ...", deleteLine);
 
         // copy the text from original file into the temporary file except the line to be deleted
         do
@@ -264,7 +264,7 @@ void deleteEntry(entry *userEntry)
     }
     else if (inputCheck == 'n')
     {
-        printf("Eintrag #%d wird nicht gelöscht ...", deleteLine);
+        printf("Eintrag #%d wird nicht geloescht ...", deleteLine);
 
         fclose(file);
         fclose(temp);
@@ -300,10 +300,11 @@ void editEntry(entry *userEntry)
     // if Error output ERROR 404 (file not found)
     if (file == NULL || new == NULL)
     {
-        printf("Datei exisitiert nicht! Bitte zuerst neue Einträge erstellen.");
+        printf("Datei exisitiert nicht! Bitte zuerst neue Eintraege erstellen.");
         menu();
     }
 
+    // TODO: Ask for
     // copy the text from original file into the new file except the edited line
     do
     {
