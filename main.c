@@ -12,6 +12,9 @@ typedef struct Entry
     char information[200];
 } entry;
 
+// Global variables
+char inputCheck;
+
 // Function prototpyes
 int menu();
 void newEntry(entry *userEntry);
@@ -118,12 +121,30 @@ void newEntry(entry *userEntry)
     scanf("%[^\n]s", &userEntry->information);
     fflush(stdin);
 
-    // Save data in .csv file using append
-    FILE *fptr = fopen("contacts.csv", "a");
-    fprintf(fptr, "%s;%s;%s;%s\n", userEntry->firstName, userEntry->lastName, userEntry->number, userEntry->information);
-    fclose(fptr);
+    printf("Möchtest du diesen Kontakt speichern (j/n)? ");
+    scanf("%c", &inputCheck);
+    fflush(stdin);
 
-    // After function is finished return to the menu
+    while (inputCheck != 'j' && inputCheck != 'n')
+    {
+        printf("Ungültige Eingabe! Möchtest du diesen Kontakt speichern (j/n)? ");
+        scanf("%c", &inputCheck);
+        fflush(stdin);
+    }
+
+    if (inputCheck == 'j')
+    {
+        // Save data in .csv file using append
+        printf("Kontakt wird gespeichert ...");
+        FILE *fptr = fopen("contacts.csv", "a");
+        fprintf(fptr, "%s;%s;%s;%s\n", userEntry->firstName, userEntry->lastName, userEntry->number, userEntry->information);
+        fclose(fptr);
+    }
+    else if (inputCheck == 'n')
+    {
+        printf("Kontakt wird nicht gespeichert ...");
+    }
+
     menu();
 }
 
@@ -136,7 +157,7 @@ void showEntries()
     int counter = 1;
 
     printf("\n\nAlle Eintraege anzeigen");
-    printf("\n-----------------------------------------\n\n");
+    printf("\n-------------------------------------------------------------------------\n\n");
 
     // Check if file exists
     if ((fptr = fopen("contacts.csv", "r")) == NULL)
@@ -178,8 +199,11 @@ void deleteEntry(entry *userEntry)
     strcpy(tempFile, "temp____");
     strcat(tempFile, filename);
 
+    printf("Eintrag loeschen");
+    printf("\n-------------------------------------------------------------------------\n\n");
+
     // enter the line to be deleted
-    printf("Zu loeschende Linie: ");
+    printf("Zu loeschender Eintrag (Nummer): ");
     while (scanf("%d", &deleteLine) != 1)
     {
         while (getchar() != '\n')
@@ -199,29 +223,54 @@ void deleteEntry(entry *userEntry)
         menu();
     }
 
-    // copy the text from original file into the temporary file except the line to be deleted
-    do
+    printf("Bist du dir sicher, dass du Eintrag #%d löschen möchtest (j/n)? ", deleteLine);
+    scanf("%c", &inputCheck);
+    fflush(stdin);
+
+    while (inputCheck != 'j' && inputCheck != 'n')
     {
-        fgets(buffer, 2048, file);
+        printf("Ungültige Eingabe!Bist du dir sicher, dass du Eintrag #%d löschen möchtest (j/n)? ", deleteLine);
+        scanf("%c", &inputCheck);
+        fflush(stdin);
+    }
 
-        if (feof(file))
-            keepGoing = false;
-        else if (currentLine != deleteLine)
-            fputs(buffer, temp);
+    if (inputCheck == 'j')
+    {
+        printf("Eintrag #%d wird gelöscht ...", deleteLine);
 
-        currentLine++;
+        // copy the text from original file into the temporary file except the line to be deleted
+        do
+        {
+            fgets(buffer, 2048, file);
 
-    } while (keepGoing == true);
+            if (feof(file))
+                keepGoing = false;
+            else if (currentLine != deleteLine)
+                fputs(buffer, temp);
 
-    // close all open files
-    fclose(file);
-    fclose(temp);
+            currentLine++;
 
-    // remove original file
-    remove(filename);
+        } while (keepGoing == true);
 
-    // rename temporary file to the name of original file
-    rename(tempFile, filename);
+        // close all open files
+        fclose(file);
+        fclose(temp);
+
+        // remove original file
+        remove(filename);
+
+        // rename temporary file to the name of original file
+        rename(tempFile, filename);
+    }
+    else if (inputCheck == 'n')
+    {
+        printf("Eintrag #%d wird nicht gelöscht ...", deleteLine);
+
+        fclose(file);
+        fclose(temp);
+
+        remove(tempFile);
+    }
 
     // When function finishes go back to menu
     menu();
