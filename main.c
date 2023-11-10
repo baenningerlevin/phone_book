@@ -25,6 +25,7 @@ void deleteEntry(entry *userEntry);
 void editEntry(entry *userEntry);
 void getUserInput(entry *userEntry);
 void searchEntry(entry *userEntry);
+int validateName(char* name);
 
 // Main function
 int main()
@@ -145,79 +146,36 @@ void newEntry(entry *userEntry)
 void getUserInput(entry *userEntry)
 {
     printf("Was ist der Vorname von deinem Kontakt? ");
-    while (1)
+while (1)
+{
+    fflush(stdin);
+    scanf("%[^\n]s", &userEntry->firstName);
+    fflush(stdin);
+    if (validateName(userEntry->firstName) == 0)
     {
-        fflush(stdin);
-        scanf("%[^\n]s", &userEntry->firstName);
-        fflush(stdin);
-        int valid = 1;
-
-        // Go through every character of the string and check if it's a letter
-        for (int i = 0; i < strlen(userEntry->firstName); i++)
-        {
-            //checks if character is a letter
-            if (!isalpha(userEntry->firstName[i]) && userEntry->firstName[i] != '-')
-            {
-                valid = 0;
-            }
-            //checks if there is any space
-            if (isspace(userEntry->firstName[i]))
-            {
-                valid = 0;
-            }
-            //checks if the first and last letter are a - or not
-            if (userEntry->firstName[i] == '-' && (i == 0 || i == strlen(userEntry->firstName) - 1))
-            {
-                valid = 0;
-            }
-        }
-        if (valid == 0)
-        {
-            printf("Fehler: Die Eingabe darf keine Zahlen oder Sonderzeichen enthalten. Bitte versuche es erneut: ");
-        }
-        else
-        {
-            break;
-        }
+        continue;
     }
-
-    printf("Was ist der Nachname von deinem Kontakt? ");
-    while (1)
+    else
     {
-        fflush(stdin);
-        scanf("%[^\n]s", &userEntry->lastName);
-        fflush(stdin);
-        int valid = 1;
-
-        // Go through every character of the string and check if it's a letter
-        for (int i = 0; i < strlen(userEntry->lastName); i++)
-        {
-            //checks if character is a letter
-            if (!isalpha(userEntry->lastName[i]) && userEntry->lastName[i] != '-')
-            {
-                    
-                    valid = 0;
-            }
-            //checks if there is any space
-            if (isspace(userEntry->lastName[i]))
-            {
-                valid = 0;
-            }
-            //checks if the first and last letter are a - or not
-            if (userEntry->lastName[i] == '-' && (i == 0 || i == strlen(userEntry->lastName) - 1))
-            {
-                valid = 0;
-            }
-        }
-        if (valid == 0)
-        {
-            printf("Fehler: Die Eingabe darf keine Zahlen oder Sonderzeichen enthalten. Bitte versuche es erneut: ");
-        }
-        else
-        {
-            break;
-        }
+        break;
     }
+}
+
+printf("Was ist der Nachname von deinem Kontakt? ");
+while (1)
+{
+    fflush(stdin);
+    scanf("%[^\n]s", &userEntry->lastName);
+    fflush(stdin);
+    if (validateName(userEntry->lastName) == 0)
+    {
+        continue;
+    }
+    else
+    {
+        break;
+    }
+}
 
     printf("Wie lautet die Telefonnummer von deinem Kontakt (+41 XX XXX XX XX)? ");
     while (1)
@@ -241,6 +199,38 @@ void getUserInput(entry *userEntry)
     printf("Sonstige Informationen? ");
     scanf("%[^\n]s", &userEntry->information);
     fflush(stdin);
+}
+
+int validateName(char* name) {
+    int valid = 1;
+    // Go through every character of the string and check if it's a letter
+    for (int i = 0; i < strlen(name); i++)
+    {
+        //checks if character is a letter
+        if (!isalpha(name[i]) && name[i] != '-')
+        {
+            valid = 0;
+        }
+        //checks if there is any space
+        if (isspace(name[i]))
+        {
+            valid = 0;
+        }
+        //checks if the first and last letter are a - or not
+        if (name[i] == '-' && (i == 0 || i == strlen(name) - 1))
+        {
+            valid = 0;
+        }
+    }
+    if (valid == 0)
+    {
+        printf("Fehler: Die Eingabe darf keine Zahlen oder Sonderzeichen enthalten. Bitte versuche es erneut: ");
+        return 0;
+    }
+    else
+    {
+        return 1;
+    }
 }
 
 // Function to show all entries
@@ -269,12 +259,12 @@ void showEntries(entry *userEntry)
             char *token = strtok(lineRead, ";");
 
             // Print the index and the first token
-            printf("%d: %s", counter, token);
+            printf("%d: %-20s", counter, token);
 
             // Print the rest of the tokens with a space character in between
             while (token = strtok(NULL, ";"))
             {
-                printf(" %s", token);
+                printf(" %-20s", token);
             }
 
             // Print a newline character to move to the next line
@@ -542,4 +532,4 @@ void searchEntry(entry *userEntry)
     fclose(fp);
 
     menu();
-}
+} 
