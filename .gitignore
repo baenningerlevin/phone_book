@@ -1,3 +1,8 @@
 # ignore .csv file
-
 *.csv
+
+# ignore configurations
+*.vscode
+
+# ignore .exe files (automatically created)
+*.exe
