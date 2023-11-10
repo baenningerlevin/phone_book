@@ -11,6 +11,7 @@ typedef struct Entry
     char lastName[50];
     char number[17];
     char information[200];
+    int lineNum;
 } entry;
 
 // Global variables
@@ -71,7 +72,7 @@ int menu()
     switch (choice)
     {
     case 1:
-        showEntries();
+        showEntries(&userEntry);
         break;
 
     case 2:
@@ -154,14 +155,27 @@ void getUserInput(entry *userEntry)
         // Go through every character of the string and check if it's a letter
         for (int i = 0; i < strlen(userEntry->firstName); i++)
         {
-            if (!isalpha(userEntry->firstName[i]))
+            //checks if character is a letter
+            if (!isalpha(userEntry->firstName[i]) && userEntry->firstName[i] != '-')
             {
-                printf("Fehler: Die Eingabe darf keine Zahlen oder Sonderzeichen enthalten. Bitte versuche es erneut: ");
                 valid = 0;
-                break;
+            }
+            //checks if there is any space
+            if (isspace(userEntry->firstName[i]))
+            {
+                valid = 0;
+            }
+            //checks if the first and last letter are a - or not
+            if (userEntry->firstName[i] == '-' && (i == 0 || i == strlen(userEntry->firstName) - 1))
+            {
+                valid = 0;
             }
         }
-        if (valid)
+        if (valid == 0)
+        {
+            printf("Fehler: Die Eingabe darf keine Zahlen oder Sonderzeichen enthalten. Bitte versuche es erneut: ");
+        }
+        else
         {
             break;
         }
@@ -178,14 +192,28 @@ void getUserInput(entry *userEntry)
         // Go through every character of the string and check if it's a letter
         for (int i = 0; i < strlen(userEntry->lastName); i++)
         {
-            if (!isalpha(userEntry->lastName[i]))
+            //checks if character is a letter
+            if (!isalpha(userEntry->lastName[i]) && userEntry->lastName[i] != '-')
             {
-                printf("Fehler: Die Eingabe darf keine Zahlen oder Sonderzeichen enthalten. Bitte versuche es erneut: ");
+                    
+                    valid = 0;
+            }
+            //checks if there is any space
+            if (isspace(userEntry->lastName[i]))
+            {
                 valid = 0;
-                break;
+            }
+            //checks if the first and last letter are a - or not
+            if (userEntry->lastName[i] == '-' && (i == 0 || i == strlen(userEntry->lastName) - 1))
+            {
+                valid = 0;
             }
         }
-        if (valid)
+        if (valid == 0)
+        {
+            printf("Fehler: Die Eingabe darf keine Zahlen oder Sonderzeichen enthalten. Bitte versuche es erneut: ");
+        }
+        else
         {
             break;
         }
@@ -216,7 +244,7 @@ void getUserInput(entry *userEntry)
 }
 
 // Function to show all entries
-void showEntries()
+void showEntries(entry *userEntry)
 {
     // Variable Declaration
     FILE *fptr;
@@ -407,7 +435,7 @@ void editEntry(entry *userEntry)
             getUserInput(userEntry);
 
             // Check if user wants to save the entry
-            printf("Moechtest du die Kontaktinformationen ändern (j/n)? ");
+            printf("Moechtest du die Kontaktinformationen aendern (j/n)? ");
             scanf("%c", &inputCheck);
             fflush(stdin);
 
@@ -447,7 +475,6 @@ void editEntry(entry *userEntry)
 }
 
 // Function to search for an entry
-// TODO: Add function, when no entry is found
 void searchEntry(entry *userEntry)
 {
     // pointer declaration
@@ -457,18 +484,21 @@ void searchEntry(entry *userEntry)
     char word[100], filename[100] = "contacts.csv";
     char line[100];
     int counter = 0;
+    int j = 0;
 
-    printf("Wen suchst du? (Vorname): ");
+    printf("Wen suchst du?: ");
     fflush(stdin);
     scanf("%[^\n]", word);
     fflush(stdin);
+
+    printf("Eintraege werden gesucht...\n");
 
     fp = fopen(filename, "r");
 
     // checks if pointer gets back nothing
     if (fp == NULL)
     {
-        printf("Datei exisitiert nicht! Bitte zuerst neue Einträge erstellen.");
+        printf("Datei exisitiert nicht! Bitte zuerst neue Eintraege erstellen.");
         menu();
     }
 
@@ -491,12 +521,21 @@ void searchEntry(entry *userEntry)
             // loops through the string to extract all other tokens
             while (token != NULL)
             {
-                printf("%-20s", token); // ajusts the buffer zone of each entry to 20 characers
+                printf("%-20s", token); // adjusts the buffer zone of each entry to 20 characers
 
                 token = strtok(NULL, ";"); // sets the variable token to the delimiter ;
             }
 
             printf("\n");
+        }
+    }
+
+    if (strstr(line, word) == NULL)
+    {
+        while (j < 1)
+        {
+            printf("\nKeine Eintraege gefunden! Bitte zuerst neue Eintraege erstellen!");
+            j++;
         }
     }
 
