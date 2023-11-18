@@ -25,13 +25,14 @@ void deleteEntry(entry *userEntry);
 void editEntry(entry *userEntry);
 void getUserInput(entry *userEntry);
 void searchEntry(entry *userEntry);
-int validateName(char* name);
+int validateName(char *name);
 
 // Main function
 int main()
 {
     menu();
 
+    system("pause");
     return 0;
 }
 
@@ -93,7 +94,7 @@ int menu()
         break;
 
     case 6:
-        printf("\nProgramm schliessen ...\n");
+        printf("\nProgramm schliessen ...\n\n");
 
         // This closes the program
         return EXIT_SUCCESS;
@@ -146,36 +147,36 @@ void newEntry(entry *userEntry)
 void getUserInput(entry *userEntry)
 {
     printf("Was ist der Vorname von deinem Kontakt? ");
-while (1)
-{
-    fflush(stdin);
-    scanf("%[^\n]s", &userEntry->firstName);
-    fflush(stdin);
-    if (validateName(userEntry->firstName) == 0)
+    while (1)
     {
-        continue;
+        fflush(stdin);
+        scanf("%[^\n]s", &userEntry->firstName);
+        fflush(stdin);
+        if (validateName(userEntry->firstName) == 0)
+        {
+            continue;
+        }
+        else
+        {
+            break;
+        }
     }
-    else
-    {
-        break;
-    }
-}
 
-printf("Was ist der Nachname von deinem Kontakt? ");
-while (1)
-{
-    fflush(stdin);
-    scanf("%[^\n]s", &userEntry->lastName);
-    fflush(stdin);
-    if (validateName(userEntry->lastName) == 0)
+    printf("Was ist der Nachname von deinem Kontakt? ");
+    while (1)
     {
-        continue;
+        fflush(stdin);
+        scanf("%[^\n]s", &userEntry->lastName);
+        fflush(stdin);
+        if (validateName(userEntry->lastName) == 0)
+        {
+            continue;
+        }
+        else
+        {
+            break;
+        }
     }
-    else
-    {
-        break;
-    }
-}
 
     printf("Wie lautet die Telefonnummer von deinem Kontakt (+41 XX XXX XX XX)? ");
     while (1)
@@ -201,22 +202,23 @@ while (1)
     fflush(stdin);
 }
 
-int validateName(char* name) {
+int validateName(char *name)
+{
     int valid = 1;
     // Go through every character of the string and check if it's a letter
     for (int i = 0; i < strlen(name); i++)
     {
-        //checks if character is a letter
+        // checks if character is a letter
         if (!isalpha(name[i]) && name[i] != '-')
         {
             valid = 0;
         }
-        //checks if there is any space
+        // checks if there is any space
         if (isspace(name[i]))
         {
             valid = 0;
         }
-        //checks if the first and last letter are a - or not
+        // checks if the first and last letter are a - or not
         if (name[i] == '-' && (i == 0 || i == strlen(name) - 1))
         {
             valid = 0;
@@ -392,7 +394,7 @@ void editEntry(entry *userEntry)
     bool keepGoing = true;
     int currentLine = 1;
 
-    printf("\nEintrag bearbeiten");
+    printf("\nEintrag bearbeiten (Fuer Umlaute: ae, ue, oe!)");
     printf("\n-------------------------------------------------------------------------\n\n");
 
     // enter the line to be edited
@@ -532,4 +534,4 @@ void searchEntry(entry *userEntry)
     fclose(fp);
 
     menu();
-} 
+}
