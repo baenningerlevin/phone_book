@@ -1,3 +1,3 @@
-# Telephone directory
+# Phone book
 
-The telephone directory is an internal order from Bühler.
+The phone book is an internal task from Bühler.
