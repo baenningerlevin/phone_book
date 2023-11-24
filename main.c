@@ -27,6 +27,7 @@ void editEntry(entry *userEntry);
 void getUserInput(entry *userEntry);
 void searchEntry(entry *userEntry);
 int validateName(char *name);
+void getInputAndValidate(char *prompt, char *input);
 
 // Main function
 int main()
