@@ -145,8 +145,38 @@ void newEntry(entry *userEntry)
     menu();
 }
 
+// Function to get user input
+void getUserInput(entry *userEntry)
+{
+    // Get user input and validate it (names)
+    getInputAndValidate("Was ist der Vorname von deinem Kontakt? ", userEntry->firstName);
+    getInputAndValidate("Was ist der Nachname von deinem Kontakt? ", userEntry->lastName);
+
+    // Check if user types valid phone number
+    printf("Wie lautet die Telefonnummer von deinem Kontakt (+41 XX XXX XX XX)? ");
+    while (1)
+    {
+        char number[17];
+        scanf("%[^\n]s", number);
+        fflush(stdin);
+        if (is_valid_phone_number(number))
+        {
+            strcpy(userEntry->number, number);
+            break;
+        }
+        else
+        {
+            printf("Ungueltige Eingabe! Die Telefonnummer muss im Format +41 XX XXX XX XX angegeben werden. Bitte versuche es erneut: ");
+        }
+    }
+
+    printf("Sonstige Informationen? ");
+    scanf("%[^\n]s", &userEntry->information);
+    fflush(stdin);
+}
+
 // Function to check if the phone number is valid
-bool is_valid_phone_number(char *input)
+bool isValidPhoneNumber(char *input)
 {
     char *mask = "+41 ## ### ## ##";
     if (strlen(input) != strlen(mask))
@@ -168,36 +198,6 @@ bool is_valid_phone_number(char *input)
         }
     }
     return true;
-}
-
-// Function to get user input
-void getUserInput(entry *userEntry)
-{
-    // Get user input and validate it (names)
-    getInputAndValidate("Was ist der Vorname von deinem Kontakt? ", userEntry->firstName);
-    getInputAndValidate("Was ist der Nachname von deinem Kontakt? ", userEntry->lastName);
-
-    // Check if user types valid phone number
-    printf("Wie lautet die Telefonnummer von deinem Kontakt (+41 XX XXX XX XX)? ");
-    while (1)
-    {
-        char number[1];
-        scanf("%[^\n]s", number);
-        fflush(stdin);
-        if (is_valid_phone_number(number))
-        {
-            strcpy(userEntry->number, number);
-            break;
-        }
-        else
-        {
-            printf("Ungueltige Eingabe! Die Telefonnummer muss im Format +41 XX XXX XX XX angegeben werden. Bitte versuche es erneut: ");
-        }
-    }
-
-    printf("Sonstige Informationen? ");
-    scanf("%[^\n]s", &userEntry->information);
-    fflush(stdin);
 }
 
 // Function to validate the name
