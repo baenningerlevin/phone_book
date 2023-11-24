@@ -213,11 +213,7 @@ int validateName(char *name)
         {
             valid = 0;
         }
-        // checks if there is any space
-        if (isspace(name[i]))
-        {
-            valid = 0;
-        }
+
         // checks if the first and last letter are a - or not
         if (name[i] == '-' && (i == 0 || i == strlen(name) - 1))
         {
