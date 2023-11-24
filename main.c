@@ -144,6 +144,7 @@ void newEntry(entry *userEntry)
     menu();
 }
 
+// Function to check if the phone number is valid
 bool is_valid_phone_number(char *input)
 {
     char *mask = "+41 ## ### ## ##";
@@ -171,37 +172,9 @@ bool is_valid_phone_number(char *input)
 // Function to get user input
 void getUserInput(entry *userEntry)
 {
-    printf("Was ist der Vorname von deinem Kontakt? ");
-    while (1)
-    {
-        fflush(stdin);
-        scanf("%[^\n]s", &userEntry->firstName);
-        fflush(stdin);
-        if (validateName(userEntry->firstName) == 0)
-        {
-            continue;
-        }
-        else
-        {
-            break;
-        }
-    }
-
-    printf("Was ist der Nachname von deinem Kontakt? ");
-    while (1)
-    {
-        fflush(stdin);
-        scanf("%[^\n]s", &userEntry->lastName);
-        fflush(stdin);
-        if (validateName(userEntry->lastName) == 0)
-        {
-            continue;
-        }
-        else
-        {
-            break;
-        }
-    }
+    // Get user input and validate it (names)
+    getInputAndValidate("Was ist der Vorname von deinem Kontakt? ", userEntry->firstName);
+    getInputAndValidate("Was ist der Nachname von deinem Kontakt? ", userEntry->lastName);
 
     // Check if user types valid phone number
     printf("Wie lautet die Telefonnummer von deinem Kontakt (+41 XX XXX XX XX)? ");
@@ -226,6 +199,7 @@ void getUserInput(entry *userEntry)
     fflush(stdin);
 }
 
+// Function to validate the name
 int validateName(char *name)
 {
     int valid = 1;
@@ -252,6 +226,26 @@ int validateName(char *name)
     else
     {
         return 1;
+    }
+}
+
+// Function to get input and validate it
+void getInputAndValidate(char *prompt, char *input)
+{
+    printf("%s", prompt);
+    while (1)
+    {
+        fflush(stdin);
+        scanf("%[^\n]s", input);
+        fflush(stdin);
+        if (validateName(input) == 0)
+        {
+            continue;
+        }
+        else
+        {
+            break;
+        }
     }
 }
 
