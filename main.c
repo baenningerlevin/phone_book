@@ -20,7 +20,7 @@ char inputCheck;
 // Function prototpyes
 int menu();
 void newEntry(entry *userEntry);
-void showEntries();
+void showEntries(entry *userEntry);
 void deleteEntry(entry *userEntry);
 void editEntry(entry *userEntry);
 void getUserInput(entry *userEntry);
@@ -135,7 +135,7 @@ void newEntry(entry *userEntry)
     }
 
     // If user doesn't want to save the entry
-    else if (inputCheck == 'n')
+    else
     {
         printf("\nKontakt wird nicht gespeichert ...");
     }
@@ -368,7 +368,7 @@ void deleteEntry(entry *userEntry)
     }
 
     // If user doesn't want to delete the entry
-    else if (inputCheck == 'n')
+    else
     {
         printf("Eintrag #%d wird nicht geloescht ...", deleteLine);
 
@@ -448,7 +448,7 @@ void editEntry(entry *userEntry)
             }
 
             // If user doesn't want to save the entry
-            else if (inputCheck == 'n')
+            else
             {
                 printf("\nAenderungen werden nicht gespeichert ...");
                 fputs(buffer, new);
