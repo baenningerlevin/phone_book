@@ -110,16 +110,16 @@ void newEntry(entry *userEntry)
 
     // Get user input, working with scanf() because of the formatting of the .csv file
     getUserInput(userEntry);
-
-    // Check if user wants to save the entry
-    printf("Moechtest du diesen Kontakt speichern (j/n)? ");
-    scanf("%c", &inputCheck);
-    fflush(stdin);
+    inputCheck = ' ';
 
     // Check if user types in a valid input
     while (inputCheck != 'j' && inputCheck != 'n')
     {
-        printf("Ungueltige Eingabe! Moechtest du diesen Kontakt speichern (j/n)? ");
+        if (inputCheck != ' ')
+        {
+            printf("Ungueltige Eingabe! ");
+        }
+        printf("Moechtest du diesen Kontakt speichern (j/n)? ");
         scanf("%c", &inputCheck);
         fflush(stdin);
     }
@@ -292,6 +292,7 @@ void deleteEntry(entry *userEntry)
     int deleteLine = 0;
     bool keepGoing = true;
     int currentLine = 1;
+    inputCheck = ' ';
 
     // create (name for) temporary file
     strcpy(tempFile, "temp____");
@@ -321,14 +322,15 @@ void deleteEntry(entry *userEntry)
         menu();
     }
 
-    printf("Bist du dir sicher, dass du Eintrag #%d loeschen moechtest (j/n)? ", deleteLine);
-    scanf("%c", &inputCheck);
-    fflush(stdin);
-
     // Check if user wants to delete the entry
     while (inputCheck != 'j' && inputCheck != 'n')
     {
-        printf("Ungueltige Eingabe! Bist du dir sicher, dass du Eintrag #%d loeschen moechtest (j/n)? ", deleteLine);
+        if (inputCheck != ' ')
+        {
+            printf("Ungueltige Eingabe! ");
+        }
+
+        printf("Bist du dir sicher, dass du Eintrag #%d loeschen moechtest (j/n)? ", deleteLine);
         scanf("%c", &inputCheck);
         fflush(stdin);
     }
@@ -389,6 +391,7 @@ void editEntry(entry *userEntry)
     int editLine = 0;
     bool keepGoing = true;
     int currentLine = 1;
+    inputCheck = ' ';
 
     printf("\nEintrag bearbeiten (Fuer Umlaute: ae, ue, oe!)");
     printf("\n-------------------------------------------------------------------------\n\n");
@@ -430,7 +433,11 @@ void editEntry(entry *userEntry)
             // Check if user types in a valid input
             while (inputCheck != 'j' && inputCheck != 'n')
             {
-                printf("Ungueltige Eingabe! Moechtest du diesen Kontakt speichern (j/n)? ");
+                if (inputCheck != ' ')
+                {
+                    printf("Ungueltige Eingabe! ");
+                }
+                printf("Moechtest du diesen Kontakt speichern (j/n)? ");
                 scanf("%c", &inputCheck);
                 fflush(stdin);
             }
