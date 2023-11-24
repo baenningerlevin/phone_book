@@ -19,24 +19,16 @@ char inputCheck;
 
 // Function prototpyes
 int menu();
-void newEntry(entry *userEntry);
-bool is_valid_phone_number(char *input);
 void showEntries(entry *userEntry);
+void newEntry(entry *userEntry);
+void getUserInput(entry *userEntry);
+void checkInput(char prompt[]);
+void getInputAndValidate(char *prompt, char *input);
+bool isValidPhoneNumber(char *input);
+int validateName(char *name);
 void deleteEntry(entry *userEntry);
 void editEntry(entry *userEntry);
-void getUserInput(entry *userEntry);
 void searchEntry(entry *userEntry);
-int validateName(char *name);
-void getInputAndValidate(char *prompt, char *input);
-
-// Main function
-int main()
-{
-    menu();
-
-    system("pause");
-    return 0;
-}
 
 // Menu function
 int menu()
@@ -104,6 +96,55 @@ int menu()
     }
 }
 
+// Function to show all entries
+void showEntries(entry *userEntry)
+{
+    // Variable Declaration
+    FILE *fptr;
+    char lineRead[307];
+    int counter = 1;
+
+    printf("\n\nAlle Eintraege anzeigen");
+    printf("\n-------------------------------------------------------------------------\n\n");
+
+    // Check if file exists
+    if ((fptr = fopen("contacts.csv", "r")) == NULL)
+    {
+        // Go back to menu, if it doesn't exist
+        printf("\nDatei exisitiert nicht! Bitte zuerst neue Eintraege erstellen.");
+    }
+    else
+    {
+        // Read every line of the .csv file
+        while (fgets(lineRead, 307, fptr) != NULL)
+        {
+            // Split the line into tokens separated by semicolons
+            char *token = strtok(lineRead, ";");
+
+            // Print the index and the first token
+            printf("%d: %-20s", counter, token);
+
+            // Print the rest of the tokens with a space character in between
+            while (token = strtok(NULL, ";"))
+            {
+                printf(" %-20s", token);
+            }
+
+            // Print a newline character to move to the next line
+            printf("\n");
+
+            // Increment the counter
+            counter++;
+        }
+    }
+
+    // Close file
+    fclose(fptr);
+
+    // After function finishes go back to menu
+    menu();
+}
+
 // Function for a new entry
 void newEntry(entry *userEntry)
 {
@@ -115,16 +156,7 @@ void newEntry(entry *userEntry)
     inputCheck = ' ';
 
     // Check if user types in a valid input
-    while (inputCheck != 'j' && inputCheck != 'n')
-    {
-        if (inputCheck != ' ')
-        {
-            printf("Ungueltige Eingabe! ");
-        }
-        printf("Moechtest du diesen Kontakt speichern (j/n)? ");
-        scanf("%c", &inputCheck);
-        fflush(stdin);
-    }
+    checkInput("Moechtest du diesen Kontakt speichern (j/n)? ");
 
     // If user wants to save the entry
     if (inputCheck == 'j')
@@ -173,6 +205,41 @@ void getUserInput(entry *userEntry)
     printf("Sonstige Informationen? ");
     scanf("%[^\n]s", &userEntry->information);
     fflush(stdin);
+}
+
+// Function to check if user types in a valid input
+void checkInput(char prompt[])
+{
+    while (inputCheck != 'j' && inputCheck != 'n')
+    {
+        if (inputCheck != ' ')
+        {
+            printf("Ungueltige Eingabe! ");
+        }
+        printf(prompt);
+        scanf("%c", &inputCheck);
+        fflush(stdin);
+    }
+}
+
+// Function to get input and validate it
+void getInputAndValidate(char *prompt, char *input)
+{
+    printf("%s", prompt);
+    while (1)
+    {
+        fflush(stdin);
+        scanf("%[^\n]s", input);
+        fflush(stdin);
+        if (validateName(input) == 0)
+        {
+            continue;
+        }
+        else
+        {
+            break;
+        }
+    }
 }
 
 // Function to check if the phone number is valid
@@ -230,75 +297,6 @@ int validateName(char *name)
     }
 }
 
-// Function to get input and validate it
-void getInputAndValidate(char *prompt, char *input)
-{
-    printf("%s", prompt);
-    while (1)
-    {
-        fflush(stdin);
-        scanf("%[^\n]s", input);
-        fflush(stdin);
-        if (validateName(input) == 0)
-        {
-            continue;
-        }
-        else
-        {
-            break;
-        }
-    }
-}
-
-// Function to show all entries
-void showEntries(entry *userEntry)
-{
-    // Variable Declaration
-    FILE *fptr;
-    char lineRead[307];
-    int counter = 1;
-
-    printf("\n\nAlle Eintraege anzeigen");
-    printf("\n-------------------------------------------------------------------------\n\n");
-
-    // Check if file exists
-    if ((fptr = fopen("contacts.csv", "r")) == NULL)
-    {
-        // Go back to menu, if it doesn't exist
-        printf("\nDatei exisitiert nicht! Bitte zuerst neue Eintraege erstellen.");
-    }
-    else
-    {
-        // Read every line of the .csv file
-        while (fgets(lineRead, 307, fptr) != NULL)
-        {
-            // Split the line into tokens separated by semicolons
-            char *token = strtok(lineRead, ";");
-
-            // Print the index and the first token
-            printf("%d: %-20s", counter, token);
-
-            // Print the rest of the tokens with a space character in between
-            while (token = strtok(NULL, ";"))
-            {
-                printf(" %-20s", token);
-            }
-
-            // Print a newline character to move to the next line
-            printf("\n");
-
-            // Increment the counter
-            counter++;
-        }
-    }
-
-    // Close file
-    fclose(fptr);
-
-    // After function finishes go back to menu
-    menu();
-}
-
 // Function to delete an entry
 void deleteEntry(entry *userEntry)
 {
@@ -342,17 +340,7 @@ void deleteEntry(entry *userEntry)
     }
 
     // Check if user wants to delete the entry
-    while (inputCheck != 'j' && inputCheck != 'n')
-    {
-        if (inputCheck != ' ')
-        {
-            printf("Ungueltige Eingabe! ");
-        }
-
-        printf("Bist du dir sicher, dass du Eintrag #%d loeschen moechtest (j/n)? ", deleteLine);
-        scanf("%c", &inputCheck);
-        fflush(stdin);
-    }
+    checkInput("Moechtest du diesen Kontakt loeschen (j/n)? ");
 
     // If user wants to delete the entry
     if (inputCheck == 'j')
@@ -450,16 +438,7 @@ void editEntry(entry *userEntry)
             fflush(stdin);
 
             // Check if user types in a valid input
-            while (inputCheck != 'j' && inputCheck != 'n')
-            {
-                if (inputCheck != ' ')
-                {
-                    printf("Ungueltige Eingabe! ");
-                }
-                printf("Moechtest du diesen Kontakt speichern (j/n)? ");
-                scanf("%c", &inputCheck);
-                fflush(stdin);
-            }
+            checkInput("Moechtest du diese Aenderungen speichern (j/n)? ");
 
             // If user wants to save the entry
             if (inputCheck == 'j')
@@ -556,4 +535,13 @@ void searchEntry(entry *userEntry)
     fclose(fp);
 
     menu();
+}
+
+// Main function
+int main()
+{
+    menu();
+
+    system("pause");
+    return 0;
 }
