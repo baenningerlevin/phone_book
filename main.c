@@ -20,6 +20,7 @@ char inputCheck;
 // Function prototpyes
 int menu();
 void newEntry(entry *userEntry);
+bool is_valid_phone_number(char *input);
 void showEntries(entry *userEntry);
 void deleteEntry(entry *userEntry);
 void editEntry(entry *userEntry);
@@ -143,6 +144,30 @@ void newEntry(entry *userEntry)
     menu();
 }
 
+bool is_valid_phone_number(char *input)
+{
+    char *mask = "+41 ## ### ## ##";
+    if (strlen(input) != strlen(mask))
+    {
+        return false;
+    }
+    for (int i = 0; i < strlen(mask); i++)
+    {
+        if (mask[i] == '#')
+        {
+            if (!isdigit(input[i]))
+            {
+                return false;
+            }
+        }
+        else if (input[i] != mask[i])
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
 // Function to get user input
 void getUserInput(entry *userEntry)
 {
@@ -178,22 +203,21 @@ void getUserInput(entry *userEntry)
         }
     }
 
+    // Check if user types valid phone number
     printf("Wie lautet die Telefonnummer von deinem Kontakt (+41 XX XXX XX XX)? ");
     while (1)
     {
+        char number[1];
+        scanf("%[^\n]s", number);
         fflush(stdin);
-        scanf("%[^\n]s", &userEntry->number);
-        fflush(stdin);
-        int valid = 1;
-        // Check if the number is in the correct format
-        if (userEntry->number[0] != '+' || userEntry->number[1] != '4' || userEntry->number[2] != '1' || userEntry->number[3] != ' ' || !isdigit(userEntry->number[4]) || !isdigit(userEntry->number[5]) || userEntry->number[6] != ' ' || !isdigit(userEntry->number[7]) || !isdigit(userEntry->number[8]) || !isdigit(userEntry->number[9]) || userEntry->number[10] != ' ' || !isdigit(userEntry->number[11]) || !isdigit(userEntry->number[12]) || userEntry->number[13] != ' ' || !isdigit(userEntry->number[14]) || !isdigit(userEntry->number[15]))
+        if (is_valid_phone_number(number))
         {
-            printf("Fehler: Die Telefonnummer muss im Format +41 XX XXX XX XX angegeben werden. Bitte versuche es erneut: \n");
-            valid = 0;
-        }
-        if (valid)
-        {
+            strcpy(userEntry->number, number);
             break;
+        }
+        else
+        {
+            printf("Ungueltige Eingabe! Die Telefonnummer muss im Format +41 XX XXX XX XX angegeben werden. Bitte versuche es erneut: ");
         }
     }
 
